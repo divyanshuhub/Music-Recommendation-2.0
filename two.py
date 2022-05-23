@@ -15,8 +15,9 @@ song_cluster_pipeline = pickle.load(open("mrs_model", 'rb'))
 
 data = pd.read_csv("data.csv")
 
-SPOTIFY_CLIENT_ID = "d5a1ba2ad8334bb4a5465f8a86d33ef6" #os.environ.get('SPOTIFY_CLIENT_ID')
-SPOTIFY_CLIENT_SECRET = "efc91d67f8764bac9adad626d6b6f1ce" #os.environ.get('SPOTIFY_CLIENT_SECRET')
+SPOTIFY_CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID')
+SPOTIFY_CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET')
+
 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTIFY_CLIENT_ID,
                                                            client_secret=SPOTIFY_CLIENT_SECRET))
@@ -65,6 +66,7 @@ def get_mean_vector(song_list, spotify_data):
         song_data = get_song_data(song, spotify_data)
         if song_data is None:
             print('Warning: {} does not exist in Spotify or in database'.format(song['name']))
+            return ["error"]
             continue
         song_vector = song_data[number_cols].values
         song_vectors.append(song_vector)
@@ -103,6 +105,9 @@ def recommend_songs(song_list, spotify_data = data, n_songs=10):
     #print(song_dict)
 
     song_center = get_mean_vector(song_list, spotify_data)
+    print(song_center)
+    if song_center[0] == "error":
+        return "error"
     scaler = song_cluster_pipeline.steps[0][1]
     scaled_data = scaler.transform(spotify_data[number_cols])
     scaled_song_center = scaler.transform(song_center.reshape(1, -1))
@@ -120,12 +125,15 @@ def recommendations(song_name):
     songList = [{"name": song, "year": find_song_year(song)}]
     ss = recommend_songs(songList)
     titles,links=[],[]
+    data = []
     c=0
+    if ss=="error":
+        return data,c
     for s in ss:
         c+=1
         titles.append("Title: "+s['name']+"    By Artist(s): "+s['artists'])
         links.append(youtube.searchyt(s['artists'],s['name'],s['year']))
-    data = []
+
     for i in range(c):
         data.append([titles[i],links[i]])
         print(titles[i])
