@@ -20,5 +20,5 @@ def searchyt(artist,song,year):
     #print(link)
     html = urllib.request.urlopen(link)
     video_ids = re.search(r"watch\?v=(\S{11})", html.read().decode())
-    video_link = "https://www.youtube.com/watch?v=" + video_ids.group()
+    video_link = "https://www.youtube.com/" + video_ids.group()
     return video_link
