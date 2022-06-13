@@ -4,7 +4,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Recommendation system</title>
+    <title> Content Based Music Recommender </title>
     <style>
     *{
 			padding: 0;
@@ -72,7 +72,7 @@ body {
 <body background={{user_image}} style="width:1040; height:960;">
 <div class="container plan">
 <center>
-    <h1> Song Recommendation System</h1>
+    <h1> Content Based Music Recommender </h1>
 
 <form action="{{ url_for('predict') }} " method ='POST' >
     <input type="text" name="song" placeholder ="Enter Song Name"  required/>
@@ -87,11 +87,14 @@ body {
     </script>
 </form>
     {% if len == 0 %}
-    <h3>
-        Oops ! the movie requested is not found </br>
-        pls type movies correct & full name !!!
+    <li>
+	    
+    	<h3>
+        	Oops ! The music requested is not found </br>
+        	pls type Music's correct & full name !!!
 
-    </h3>
+    	</h3>
+   </li>
     {% else %}
     <ul>
         {% for i in data %}
